@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -12,15 +13,19 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Placeholder - will connect to Lovable Cloud auth
-    setTimeout(() => {
-      toast.info("El backend aún no está configurado. Activa Lovable Cloud para habilitar la autenticación.");
-      setIsLoading(false);
-    }, 1000);
+    const { error } = await signIn(email, password);
+    setIsLoading(false);
+    if (error) {
+      toast.error("Credenciales incorrectas");
+    } else {
+      toast.success("Sesión iniciada");
+      navigate("/admin");
+    }
   };
 
   return (

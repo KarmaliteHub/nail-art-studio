@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,38 +9,38 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-interface GalleryItem {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-}
+import { useGallery, useCreateGalleryImage, useDeleteGalleryImage } from "@/hooks/useGallery";
+import ImageUpload from "./ImageUpload";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AdminGallery = () => {
-  const [items, setItems] = useState<GalleryItem[]>([
-    { id: 1, title: "Diseño Floral", description: "Flores en pastel", image: "/placeholder.svg" },
-    { id: 2, title: "French Elegante", description: "Clásico francés", image: "/placeholder.svg" },
-  ]);
+  const { data: items = [], isLoading } = useGallery();
+  const createImage = useCreateGalleryImage();
+  const deleteImage = useDeleteGalleryImage();
+
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", image: "" });
+  const [form, setForm] = useState({ title: "", description: "", image_url: "" });
 
-  const handleAdd = () => {
-    if (!form.title.trim()) return;
-    setItems([...items, { id: Date.now(), ...form }]);
+  const handleAdd = async () => {
+    if (!form.image_url) return;
+    await createImage.mutateAsync(form);
     setDialogOpen(false);
-    setForm({ title: "", description: "", image: "" });
+    setForm({ title: "", description: "", image_url: "" });
   };
 
-  const handleDelete = (id: number) => {
-    setItems(items.filter((i) => i.id !== id));
+  const handleDelete = async (id: string) => {
+    await deleteImage.mutateAsync(id);
   };
+
+  if (isLoading) {
+    return <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">{[1, 2, 3, 4].map(i => <Skeleton key={i} className="aspect-square w-full" />)}</div>;
+  }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <p className="text-sm text-muted-foreground">{items.length} imagen(es)</p>
-        <Button onClick={() => { setForm({ title: "", description: "", image: "" }); setDialogOpen(true); }} className="rounded-full">
+        <Button onClick={() => { setForm({ title: "", description: "", image_url: "" }); setDialogOpen(true); }} className="rounded-full">
           <Plus className="h-4 w-4 mr-2" /> Agregar Imagen
         </Button>
       </div>
@@ -48,7 +48,7 @@ const AdminGallery = () => {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {items.map((item) => (
           <div key={item.id} className="glass-card overflow-hidden group relative">
-            <img src={item.image || "/placeholder.svg"} alt={item.title} className="w-full aspect-square object-cover" />
+            <img src={item.image_url || "/placeholder.svg"} alt={item.title} className="w-full aspect-square object-cover" />
             <div className="p-3">
               <h4 className="text-sm font-medium truncate">{item.title}</h4>
               <p className="text-xs text-muted-foreground truncate">{item.description}</p>
@@ -77,11 +77,16 @@ const AdminGallery = () => {
               <Label>Descripción</Label>
               <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </div>
-            <div className="space-y-2">
-              <Label>URL de imagen</Label>
-              <Input value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." />
-            </div>
-            <Button onClick={handleAdd} className="w-full rounded-full">Agregar</Button>
+            <ImageUpload
+              label="Imagen"
+              onUploaded={(url) => setForm({ ...form, image_url: url })}
+            />
+            {form.image_url && (
+              <img src={form.image_url} alt="Preview" className="w-full h-32 object-cover rounded-lg border border-border" />
+            )}
+            <Button onClick={handleAdd} className="w-full rounded-full" disabled={!form.image_url || createImage.isPending}>
+              Agregar
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

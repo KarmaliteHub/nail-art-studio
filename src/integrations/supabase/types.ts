@@ -14,7 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value?: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      gallery_images: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+          title?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      workers: {
+        Row: {
+          active: boolean
+          avatar_url: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          phone: string
+          sort_order: number
+          specialty: string
+        }
+        Insert: {
+          active?: boolean
+          avatar_url?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          phone?: string
+          sort_order?: number
+          specialty?: string
+        }
+        Update: {
+          active?: boolean
+          avatar_url?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          phone?: string
+          sort_order?: number
+          specialty?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

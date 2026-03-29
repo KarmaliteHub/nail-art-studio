@@ -10,71 +10,50 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-
-interface Worker {
-  id: number;
-  name: string;
-  specialty: string;
-  description: string;
-  avatar: string;
-  phone: string;
-  active: boolean;
-}
-
-const initialWorkers: Worker[] = [
-  {
-    id: 1,
-    name: "María González",
-    specialty: "Nail Art & Diseños",
-    description: "Especialista en diseños artísticos.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&crop=face",
-    phone: "",
-    active: true,
-  },
-  {
-    id: 2,
-    name: "Laura Martínez",
-    specialty: "Uñas en Gel",
-    description: "Experta en extensiones de gel.",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face",
-    phone: "",
-    active: true,
-  },
-];
+import { useWorkers, useCreateWorker, useUpdateWorker, useDeleteWorker, type Worker } from "@/hooks/useWorkers";
+import ImageUpload from "./ImageUpload";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AdminWorkers = () => {
-  const [workers, setWorkers] = useState<Worker[]>(initialWorkers);
+  const { data: workers = [], isLoading } = useWorkers();
+  const createWorker = useCreateWorker();
+  const updateWorker = useUpdateWorker();
+  const deleteWorker = useDeleteWorker();
+
   const [editing, setEditing] = useState<Worker | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", specialty: "", description: "", avatar: "", phone: "", active: true });
+  const [form, setForm] = useState({ name: "", specialty: "", description: "", avatar_url: "", phone: "", active: true });
 
   const openNew = () => {
     setEditing(null);
-    setForm({ name: "", specialty: "", description: "", avatar: "", phone: "", active: true });
+    setForm({ name: "", specialty: "", description: "", avatar_url: "", phone: "", active: true });
     setDialogOpen(true);
   };
 
   const openEdit = (w: Worker) => {
     setEditing(w);
-    setForm({ name: w.name, specialty: w.specialty, description: w.description, avatar: w.avatar, phone: w.phone, active: w.active });
+    setForm({ name: w.name, specialty: w.specialty, description: w.description, avatar_url: w.avatar_url, phone: w.phone, active: w.active });
     setDialogOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name.trim()) return;
     if (editing) {
-      setWorkers(workers.map((w) => (w.id === editing.id ? { ...w, ...form } : w)));
+      await updateWorker.mutateAsync({ id: editing.id, ...form });
     } else {
-      setWorkers([...workers, { id: Date.now(), ...form }]);
+      await createWorker.mutateAsync(form);
     }
     setDialogOpen(false);
   };
 
-  const handleDelete = (id: number) => {
-    setWorkers(workers.filter((w) => w.id !== id));
+  const handleDelete = async (id: string) => {
+    await deleteWorker.mutateAsync(id);
   };
+
+  if (isLoading) {
+    return <div className="space-y-4">{[1, 2].map(i => <Skeleton key={i} className="h-20 w-full" />)}</div>;
+  }
 
   return (
     <div>
@@ -88,7 +67,7 @@ const AdminWorkers = () => {
       <div className="grid gap-4">
         {workers.map((w) => (
           <div key={w.id} className="glass-card p-4 flex items-center gap-4">
-            <img src={w.avatar || "/placeholder.svg"} alt={w.name} className="w-12 h-12 rounded-full object-cover border border-border" />
+            <img src={w.avatar_url || "/placeholder.svg"} alt={w.name} className="w-12 h-12 rounded-full object-cover border border-border" />
             <div className="flex-1 min-w-0">
               <h4 className="font-medium text-sm truncate">{w.name}</h4>
               <p className="text-xs text-muted-foreground">{w.specialty}</p>
@@ -124,10 +103,13 @@ const AdminWorkers = () => {
               <Label>Descripción</Label>
               <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
             </div>
-            <div className="space-y-2">
-              <Label>URL de foto</Label>
-              <Input value={form.avatar} onChange={(e) => setForm({ ...form, avatar: e.target.value })} placeholder="https://..." />
-            </div>
+            <ImageUpload
+              label="Foto"
+              onUploaded={(url) => setForm({ ...form, avatar_url: url })}
+            />
+            {form.avatar_url && (
+              <img src={form.avatar_url} alt="Preview" className="w-16 h-16 rounded-full object-cover border border-border" />
+            )}
             <div className="space-y-2">
               <Label>Teléfono (opcional)</Label>
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
@@ -136,7 +118,7 @@ const AdminWorkers = () => {
               <Switch checked={form.active} onCheckedChange={(v) => setForm({ ...form, active: v })} />
               <Label>Activa</Label>
             </div>
-            <Button onClick={handleSave} className="w-full rounded-full">
+            <Button onClick={handleSave} className="w-full rounded-full" disabled={createWorker.isPending || updateWorker.isPending}>
               {editing ? "Guardar Cambios" : "Agregar Manicurista"}
             </Button>
           </div>

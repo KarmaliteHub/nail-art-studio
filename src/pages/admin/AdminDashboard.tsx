@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Users, Image, Settings, LogOut, Sparkles, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Users, Image, Settings, LogOut, Sparkles, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 import AdminWorkers from "@/components/admin/AdminWorkers";
 import AdminGallery from "@/components/admin/AdminGallery";
@@ -18,10 +19,32 @@ const tabs = [
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("workers");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, isReady, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isReady && !user) {
+      navigate("/admin/login");
+    }
+  }, [isReady, user, navigate]);
+
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Sparkles className="h-8 w-8 text-primary animate-pulse" />
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/admin/login");
+  };
 
   return (
     <div className="min-h-screen flex bg-background">
-      {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 w-64 bg-card border-r border-border transform transition-transform duration-300 md:relative md:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -39,14 +62,9 @@ const AdminDashboard = () => {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id);
-                setSidebarOpen(false);
-              }}
+              onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                activeTab === tab.id ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               <tab.icon className="h-4 w-4" />
@@ -56,24 +74,17 @@ const AdminDashboard = () => {
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
-          <Button variant="ghost" className="w-full justify-start text-muted-foreground" asChild>
-            <Link to="/admin/login">
-              <LogOut className="h-4 w-4 mr-2" />
-              Cerrar Sesión
-            </Link>
+          <Button variant="ghost" className="w-full justify-start text-muted-foreground" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Cerrar Sesión
           </Button>
         </div>
       </aside>
 
-      {/* Overlay */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-foreground/20 backdrop-blur-sm md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 z-30 bg-foreground/20 backdrop-blur-sm md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen">
         <header className="h-16 border-b border-border flex items-center px-4 md:px-6">
           <button onClick={() => setSidebarOpen(true)} className="md:hidden mr-4 text-foreground">
