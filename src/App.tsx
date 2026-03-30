@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import DynamicThemeProvider from "./components/DynamicThemeProvider";
 import PublicLayout from "./components/PublicLayout";
 import Landing from "./pages/Landing";
 import Gallery from "./pages/Gallery";
@@ -16,10 +17,11 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+    <DynamicThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
         <Routes>
           {/* Public routes */}
           <Route element={<PublicLayout />}>
@@ -34,8 +36,9 @@ const App = () => (
 
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </DynamicThemeProvider>
   </QueryClientProvider>
 );
 
