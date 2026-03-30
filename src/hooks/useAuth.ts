@@ -26,9 +26,14 @@ export function useAuth() {
     return { error };
   };
 
+  const signUp = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({ email, password });
+    return { error };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
-  return { user, isReady, signIn, signOut };
+  return { user, isReady, signIn, signUp, signOut };
 }
