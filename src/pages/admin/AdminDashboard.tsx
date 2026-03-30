@@ -21,6 +21,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>("workers");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, isReady, signOut } = useAuth();
+  const { data: settings } = useSettings();
   const navigate = useNavigate();
 
   useEffect(() => {
