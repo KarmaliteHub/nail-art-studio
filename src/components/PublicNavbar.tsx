@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Sparkles } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 
 const PublicNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { data: settings } = useSettings();
 
   const links = [
     { to: "/", label: "Inicio" },
