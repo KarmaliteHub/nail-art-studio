@@ -92,13 +92,18 @@ const AdminDashboard = () => {
       )}
 
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="h-16 border-b border-border flex items-center px-4 md:px-6">
-          <button onClick={() => setSidebarOpen(true)} className="md:hidden mr-4 text-foreground">
-            <Menu className="h-6 w-6" />
-          </button>
-          <h2 className="font-display text-lg font-semibold">
-            {tabs.find((t) => t.id === activeTab)?.label}
-          </h2>
+        <header className="h-16 border-b border-border flex items-center justify-between px-4 md:px-6">
+          <div className="flex items-center">
+            <button onClick={() => setSidebarOpen(true)} className="md:hidden mr-4 text-foreground">
+              <Menu className="h-6 w-6" />
+            </button>
+            <h2 className="font-display text-lg font-semibold">
+              {tabs.find((t) => t.id === activeTab)?.label}
+            </h2>
+          </div>
+          {settings?.logo_url && (
+            <img src={settings.logo_url} alt={settings.business_name} className="h-10 object-contain" />
+          )}
         </header>
 
         <div className="flex-1 p-4 md:p-6 overflow-auto">
