@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Users, Image, Settings, LogOut, Sparkles, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useSettings } from "@/hooks/useSettings";
 
 import AdminWorkers from "@/components/admin/AdminWorkers";
 import AdminGallery from "@/components/admin/AdminGallery";
