@@ -20,9 +20,13 @@ const PublicNavbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" />
+          {settings?.logo_url ? (
+            <img src={settings.logo_url} alt={settings.business_name} className="h-8 object-contain" />
+          ) : (
+            <Sparkles className="h-6 w-6 text-primary" />
+          )}
           <span className="font-display text-xl font-semibold text-foreground">
-            Bella Nails
+            {settings?.business_name || "Bella Nails"}
           </span>
         </Link>
 
