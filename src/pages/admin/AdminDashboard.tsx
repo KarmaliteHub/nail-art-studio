@@ -54,8 +54,12 @@ const AdminDashboard = () => {
       >
         <div className="p-6 border-b border-border">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <span className="font-display text-lg font-semibold">Bella Nails</span>
+            {settings?.logo_url ? (
+              <img src={settings.logo_url} alt={settings.business_name} className="h-6 w-6 object-contain" />
+            ) : (
+              <Sparkles className="h-5 w-5 text-primary" />
+            )}
+            <span className="font-display text-lg font-semibold">{settings?.business_name || "Bella Nails"}</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">Panel Administrativo</p>
         </div>
