@@ -62,8 +62,7 @@ export function useUpdateSettings() {
       for (const entry of entries) {
         const { error } = await supabase
           .from("app_settings")
-          .update({ value: entry.value, updated_at: entry.updated_at })
-          .eq("key", entry.key);
+          .upsert({ key: entry.key, value: entry.value, updated_at: entry.updated_at }, { onConflict: "key" });
         if (error) throw error;
       }
     },
