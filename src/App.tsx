@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import DynamicThemeProvider from "./components/DynamicThemeProvider";
+import DynamicTitle from "./components/DynamicTitle";
 import PublicLayout from "./components/PublicLayout";
 import Landing from "./pages/Landing";
 import Gallery from "./pages/Gallery";
@@ -19,6 +20,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <DynamicThemeProvider>
       <TooltipProvider>
+        <DynamicTitle />
         <Toaster />
         <Sonner />
         <BrowserRouter>

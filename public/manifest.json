@@ -1,0 +1,26 @@
+{
+  "name": "Bella Nails - Manicura Profesional",
+  "short_name": "Bella Nails",
+  "description": "Tus uñas, nuestra pasión. Servicios profesionales de nail art y cuidado de uñas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f0e8",
+  "theme_color": "#d4849a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/nail-art-logo.jpg",
+      "sizes": "1080x1080",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

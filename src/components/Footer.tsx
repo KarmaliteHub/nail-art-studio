@@ -1,17 +1,26 @@
 import { Sparkles, Instagram, Phone, MapPin } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 
 const Footer = () => {
+  const { data: settings } = useSettings();
+
   return (
     <footer className="bg-secondary/50 border-t border-border">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <span className="font-display text-lg font-semibold">Bella Nails</span>
+              {settings?.logo_url ? (
+                <img src={settings.logo_url} alt={settings.business_name} className="h-5 w-5 object-contain" />
+              ) : (
+                <Sparkles className="h-5 w-5 text-primary" />
+              )}
+              <span className="font-display text-lg font-semibold">
+                {settings?.business_name || "Bella Nails"}
+              </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Tu espacio de belleza y cuidado personal. Diseños únicos que reflejan tu estilo.
+              Tus uñas, nuestra pasión. Diseños únicos que reflejan tu estilo.
             </p>
           </div>
 
@@ -27,13 +36,15 @@ const Footer = () => {
           <div>
             <h4 className="font-display text-sm font-semibold mb-4">Contacto</h4>
             <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Phone className="h-4 w-4 text-primary" />
-                <span>+54 9 11 1234-5678</span>
-              </div>
+              {settings?.whatsapp_number && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Phone className="h-4 w-4 text-primary" />
+                  <span>+{settings.whatsapp_number}</span>
+                </div>
+              )}
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Instagram className="h-4 w-4 text-primary" />
-                <span>@bellanails</span>
+                <span>@{(settings?.business_name || "bellanails").toLowerCase().replace(/\s+/g, '')}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 text-primary" />
@@ -45,7 +56,7 @@ const Footer = () => {
 
         <div className="mt-8 pt-8 border-t border-border text-center">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Bella Nails. Todos los derechos reservados.
+            © {new Date().getFullYear()} {settings?.business_name || "Bella Nails"}. Todos los derechos reservados.
           </p>
         </div>
       </div>

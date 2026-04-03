@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Users, Image, Settings, LogOut, Sparkles, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useSettings } from "@/hooks/useSettings";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 import AdminWorkers from "@/components/admin/AdminWorkers";
 import AdminGallery from "@/components/admin/AdminGallery";
@@ -17,28 +18,12 @@ const tabs = [
   { id: "settings" as Tab, label: "Configuración", icon: Settings },
 ];
 
-const AdminDashboard = () => {
+const AdminDashboardContent = () => {
   const [activeTab, setActiveTab] = useState<Tab>("workers");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, isReady, signOut } = useAuth();
+  const { signOut } = useAuth();
   const { data: settings } = useSettings();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isReady && !user) {
-      navigate("/admin/login");
-    }
-  }, [isReady, user, navigate]);
-
-  if (!isReady) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Sparkles className="h-8 w-8 text-primary animate-pulse" />
-      </div>
-    );
-  }
-
-  if (!user) return null;
 
   const handleLogout = async () => {
     await signOut();
@@ -113,6 +98,14 @@ const AdminDashboard = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const AdminDashboard = () => {
+  return (
+    <ProtectedRoute>
+      <AdminDashboardContent />
+    </ProtectedRoute>
   );
 };
 
