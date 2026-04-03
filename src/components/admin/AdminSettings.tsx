@@ -104,6 +104,29 @@ const AdminSettings = () => {
           </div>
         </section>
 
+        <section className="glass-card p-6">
+          <h3 className="font-display text-lg font-semibold mb-4">Redes Sociales</h3>
+          <p className="text-sm text-muted-foreground mb-4">Agrega los enlaces a tus redes sociales. Déjalos vacíos para que no aparezcan en el sitio.</p>
+          <div className="space-y-4">
+            {([
+              ["social_facebook", "Facebook", "https://facebook.com/tu-pagina"],
+              ["social_instagram", "Instagram", "https://instagram.com/tu-cuenta"],
+              ["social_tiktok", "TikTok", "https://tiktok.com/@tu-cuenta"],
+              ["social_twitter", "Twitter / X", "https://x.com/tu-cuenta"],
+              ["social_youtube", "YouTube", "https://youtube.com/@tu-canal"],
+            ] as const).map(([key, label, placeholder]) => (
+              <div key={key} className="space-y-1">
+                <Label>{label}</Label>
+                <Input
+                  value={form[key]}
+                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                  placeholder={placeholder}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+
         <Button onClick={handleSave} className="rounded-full px-8" size="lg" disabled={updateSettings.isPending}>
           {updateSettings.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
           Guardar Configuración

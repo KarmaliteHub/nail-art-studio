@@ -9,6 +9,11 @@ export interface AppSettings {
   primary_color: string;
   secondary_color: string;
   accent_color: string;
+  social_facebook: string;
+  social_instagram: string;
+  social_tiktok: string;
+  social_twitter: string;
+  social_youtube: string;
 }
 
 const defaultSettings: AppSettings = {
@@ -19,6 +24,11 @@ const defaultSettings: AppSettings = {
   primary_color: "#d4849a",
   secondary_color: "#f5f0e8",
   accent_color: "#c4677e",
+  social_facebook: "",
+  social_instagram: "",
+  social_tiktok: "",
+  social_twitter: "",
+  social_youtube: "",
 };
 
 export function useSettings() {
@@ -52,8 +62,7 @@ export function useUpdateSettings() {
       for (const entry of entries) {
         const { error } = await supabase
           .from("app_settings")
-          .update({ value: entry.value, updated_at: entry.updated_at })
-          .eq("key", entry.key);
+          .upsert({ key: entry.key, value: entry.value, updated_at: entry.updated_at }, { onConflict: "key" });
         if (error) throw error;
       }
     },
